@@ -8,12 +8,24 @@ handlers.helloWorld = function (args)
   return { messageValue: message };
 }
 
-handlers.SetUserROData = function (args)
+handlers.SetUserReadOnlyData = function (args)
 {
-    var result = server.UpdateUserReadOnlyData({
+    var result = server.UpdateUserReadOnlyData
+    ({
         PlayFabId: currentPlayerId,
         Data: args.data
     });
     
+    log.info(result);
     return result;
 }
+
+handlers.GetAllUserReadOnlyData = function (args)
+{
+    var result = server.GetUserReadOnlyData
+    ({
+        PlayFabId: currentPlayerId
+    })
+    return result;
+}
+
