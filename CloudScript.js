@@ -1,13 +1,16 @@
 // defining these up top so we can easily change these later if we need to.
-var CHANCE_TO_DIE = 0.3333;						  // % chance to lose a life during battle, this could also be set in TitleData
-var GEM_MAX = 20;								  // maximum limit on the gold that can be found, this could also be set in TitleData
-var GEM_MIN = 10;                                 // maximum limit on the gold that can be found, this could also be set in TitleData
-var LIVES_CURRENCY_CODE = "LV";					  // currecny code for our Lives VC
-var GEMS_CURRENCY_CODE = "GM";					  // currency code for our Gems VC
 
-handlers.Battle = function(args) {
+var CHANCE_TO_DIE = 0.3333;     // % chance to lose a life during battle, this could also be set in TitleData
+var GEM_MAX = 20;      // maximum limit on the gold that can be found, this could also be set in TitleData
+var GEM_MIN = 10;      // maximum limit on the gold that can be found, this could also be set in TitleData
+var LIVES_CURRENCY_CODE = "LV";     // currecny code for our Lives VC
+var GEMS_CURRENCY_CODE = "GM";      // currency code for our Gems VC
+
+handlers.Battle = function(args) 
+{
 	// get the calling player's inventory and VC balances
-	var GetUserInventoryRequest = {
+	var GetUserInventoryRequest = 
+    {
         "PlayFabId": currentPlayerId
     };
 
@@ -21,7 +24,8 @@ handlers.Battle = function(args) {
 	{
 		if(!CheckLives(userVcBalances))
 		{
-			throw "No lives remaining. Purchase additional lives or wait: " + userVcRecharge[LIVES_CURRENCY_CODE].SecondsToRecharge + " seconds.";
+			throw "No lives remaining. Purchase additional lives or wait: " 
+            + userVcRecharge[LIVES_CURRENCY_CODE].SecondsToRecharge + " seconds.";
 		}
 	}
 	catch(ex)
@@ -93,4 +97,60 @@ function SubtractVc(vcBalnces, code, qty)
     };
 
     var SubtractUserVirtualCurrencyResult = server.SubtractUserVirtualCurrency(SubtractUserVirtualCurrencyRequest);
+}
+
+handlers.EasyLogEvent = function (args)
+{
+    log.info("This info was appended to the log");
+    log.error("This error was appended to the log");
+}
+
+handlers.UpdatePlayerStats = function (args, context) 
+{
+    var playerStatResult = server.UpdatePlayerStats(
+    {
+        PlayFabId: currentPlayerId,
+        Statistics: [{StatisticName: "Level", Value: 2 }]
+    });
+}
+
+handlers.UpdatePlayerData = function (args, context)
+{
+    var playerDataResult = server.UpdateUserData(
+    {
+        PlayFabId: currentPlayerId,
+        Data: { secretshoes: "golden boots 2", secrettrick: "scissor kick 2"},
+        Permission: "Public"
+    });
+}
+
+handlers.helloWorld = function (args)
+{
+  //var message = "Hello " + currentPlayerId + "!";
+    
+  var message = "Hello " + args.name;    
+    
+  log.info(message);
+  return { messageValue: message };
+}
+
+handlers.SetUserReadOnlyData = function (args)
+{
+    var result = server.UpdateUserReadOnlyData
+    ({
+        PlayFabId: currentPlayerId,
+        Data: args.data
+    });
+    
+    log.info(result);
+    return result;
+}
+
+handlers.GetAllUserReadOnlyData = function (args)
+{
+    var result = server.GetUserReadOnlyData
+    ({
+        PlayFabId: currentPlayerId
+    })
+    return result;
 }
