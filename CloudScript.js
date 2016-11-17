@@ -107,10 +107,10 @@ handlers.EasyLogEvent = function (args)
 
 handlers.UpdatePlayerStats = function (args, context) 
 {
-    var playerStatResult = server.UpdatePlayerStats(
+    var playerStatResult = server.UpdatePlayerStatistics(
     {
         PlayFabId: currentPlayerId,
-        Statistics: [{StatisticName: "Level", Value: 2 }]
+        Statistics: [{StatisticName: "SpecialTrick_TEST", Value: 2 }]
     });
 }
 
