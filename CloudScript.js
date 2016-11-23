@@ -1,11 +1,55 @@
 // defining these up top so we can easily change these later if we need to.
 
+
+// For Regenerate Currency Example
 var CHANCE_TO_DIE = 0.3333;     // % chance to lose a life during battle, this could also be set in TitleData
 var GEM_MAX = 20;      // maximum limit on the gold that can be found, this could also be set in TitleData
 var GEM_MIN = 10;      // maximum limit on the gold that can be found, this could also be set in TitleData
 var LIVES_CURRENCY_CODE = "LV";     // currecny code for our Lives VC
 var GEMS_CURRENCY_CODE = "GM";      // currency code for our Gems VC
 
+
+// FootUnited
+var ENERGY_CURRENCY_CODE = "EY";	// currecny code for our ENERGY Bar VC
+
+handlers.UserEnergy = function(args)
+{
+	// get the calling player's inventory and VC balances
+	var GetUserInventoryRequest =
+	{
+		"PlayFabId": currentPlayerId
+	};
+
+	var GetUserInventoryResult = server.GetUserInventory(GetUserInventoryRequest);
+	var userInventory = GetUserInventoryResult.Inventory;
+	var userVcBalances = GetUserInventoryResult.VirtualCurrency;
+	var userVcRecharge = GetUserInventoryResult.VirtualCurrencyRechargeTimes;
+
+	// make sure the player has > 0 energy bar before proceeding
+	try
+	{
+		if (CheckEnergy(userVcBalances))
+		{
+			throw "No energy remaining. Please wait a moment for recharging.."
+			+ userVcRecharge[ENERGY_CURRENCY_CODE].SecondsToRecharge + " seconds.";
+		}
+	}
+	catch(ex)
+	{
+		return JSON.stringify(ex);
+	}
+
+	SubtractVc(userVcBalances, ENERGY_CURRENCY_CODE, 1);
+	log.info("You have used an energy unit.");
+
+	var userEnergyResults = {};
+		userEnergyResults.currentUserVcBalances = userVcBalances;
+
+	return JSON.stringify(userEnergyResults);
+}
+
+
+// For Regenerate Currency Example
 handlers.Battle = function(args) 
 {
 	// get the calling player's inventory and VC balances
@@ -56,6 +100,7 @@ handlers.Battle = function(args)
 };
 
 
+// For Regenerate Currency Example
 function CheckLives(vcBalnces)
 {
 	if(vcBalnces != null && vcBalnces.hasOwnProperty(LIVES_CURRENCY_CODE) && vcBalnces[LIVES_CURRENCY_CODE] > 0)
@@ -67,6 +112,21 @@ function CheckLives(vcBalnces)
 		return false;
 	}
 }
+
+
+function CheckEnergy(vcBalnces)
+{
+	if (vcBalnces != null && vcBalnces.hasOwnProperty(ENERGY_CURRENCY_CODE))
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+
 
 function AddVc(vcBalnces, code, qty)
 { 
@@ -105,6 +165,11 @@ handlers.EasyLogEvent = function (args)
     log.error("This error was appended to the log");
 }
 
+handlers.GetPlayerStats = function (args)
+{
+    var playerStatResult = server.GetPla
+}
+
 handlers.UpdatePlayerStats = function (args, context) 
 {
     var playerStatResult = server.UpdatePlayerStatistics(
@@ -112,6 +177,22 @@ handlers.UpdatePlayerStats = function (args, context)
         PlayFabId: currentPlayerId,
         Statistics: [{StatisticName: "SpecialTrick_TEST", Value: 2 }]
     });
+}
+
+handlers.GetPlayerData = function (args)
+{
+    var playerDataResult = server.GetPlayerData(
+    {
+        PlayFabId: currentPlayerId,
+        Keys: ["secretshoes","secrettrick"]
+    });
+    
+	var playerDataResults = {};
+		playerDataResults..gemsFound = gemsFound;
+		playerDataResults.lostALife = lostALifesce
+
+	return JSON.stringify(battleResults);    
+    
 }
 
 handlers.UpdatePlayerData = function (args, context)
