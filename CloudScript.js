@@ -12,7 +12,7 @@ var GEMS_CURRENCY_CODE = "GM";      // currency code for our Gems VC
 // FootUnited
 var ENERGY_CURRENCY_CODE = "EY";	// currecny code for our ENERGY Bar VC
 
-handlers.UserEnergy = function(args)
+handlers.UpdatePlayerEnergy = function(args)
 {
 	// get the calling player's inventory and VC balances
 	var GetUserInventoryRequest =
