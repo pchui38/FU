@@ -28,7 +28,7 @@ handlers.UpdatePlayerEnergy = function(args)
 	// make sure the player has > 0 energy bar before proceeding
 	try
 	{
-		if (CheckEnergy(userVcBalances))
+		if (!CheckEnergy(userVcBalances))
 		{
 			throw "No energy remaining. Please wait a moment for recharging.."
 			+ userVcRecharge[ENERGY_CURRENCY_CODE].SecondsToRecharge + " seconds.";
