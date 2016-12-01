@@ -116,7 +116,7 @@ function CheckLives(vcBalnces)
 
 function CheckEnergy(vcBalnces)
 {
-	if (vcBalnces != null && vcBalnces.hasOwnProperty(ENERGY_CURRENCY_CODE))
+	if (vcBalnces != null && vcBalnces.hasOwnProperty(ENERGY_CURRENCY_CODE) && vcBalnces[ENERGY_CURRENCY_CODE] > 0)
 	{
 		return true;
 	}
