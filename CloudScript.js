@@ -49,69 +49,69 @@ handlers.UpdatePlayerEnergy = function(args)
 }
 
 
+// // For Regenerate Currency Example
+// handlers.Battle = function(args) 
+// {
+// 	// get the calling player's inventory and VC balances
+// 	var GetUserInventoryRequest = 
+//     {
+//         "PlayFabId": currentPlayerId
+//     };
+
+//     var GetUserInventoryResult = server.GetUserInventory(GetUserInventoryRequest);
+// 	var userInventory = GetUserInventoryResult.Inventory;
+// 	var userVcBalances = GetUserInventoryResult.VirtualCurrency;
+// 	var userVcRecharge = GetUserInventoryResult.VirtualCurrencyRechargeTimes;
+
+// 	// make sure the player has > 0 lives before proceeding. 
+// 	try
+// 	{
+// 		if(!CheckLives(userVcBalances))
+// 		{
+// 			throw "No lives remaining. Purchase additional lives or wait: " 
+//             + userVcRecharge[LIVES_CURRENCY_CODE].SecondsToRecharge + " seconds.";
+// 		}
+// 	}
+// 	catch(ex)
+// 	{
+// 		return JSON.stringify(ex);
+// 	}
+
+
+// 	// calculate the battle using our 'global' params...
+// 	var gemsFound = Math.floor(Math.random() * (GEM_MAX - GEM_MIN + 1) + GEM_MIN);
+// 	AddVc(userVcBalances, GEMS_CURRENCY_CODE, gemsFound);
+// 	log.info("You found " + gemsFound + " gems.");
+
+// 	var rollOfFate =  Math.floor(Math.random() * (10 - 1 + 1) + 1);
+// 	var lostALife = rollOfFate <= Math.floor(10 * CHANCE_TO_DIE) ? true : false; 
+
+// 	if(lostALife)
+// 	{
+// 		SubtractVc(userVcBalances, LIVES_CURRENCY_CODE, 1);
+// 		log.info("You lost a life.");
+// 	}
+
+// 	var battleResults = {};
+// 		battleResults.gemsFound = gemsFound;
+// 		battleResults.lostALife = lostALife;
+
+// 	return JSON.stringify(battleResults);
+// };
+
+
 // For Regenerate Currency Example
-handlers.Battle = function(args) 
-{
-	// get the calling player's inventory and VC balances
-	var GetUserInventoryRequest = 
-    {
-        "PlayFabId": currentPlayerId
-    };
-
-    var GetUserInventoryResult = server.GetUserInventory(GetUserInventoryRequest);
-	var userInventory = GetUserInventoryResult.Inventory;
-	var userVcBalances = GetUserInventoryResult.VirtualCurrency;
-	var userVcRecharge = GetUserInventoryResult.VirtualCurrencyRechargeTimes;
-
-	// make sure the player has > 0 lives before proceeding. 
-	try
-	{
-		if(!CheckLives(userVcBalances))
-		{
-			throw "No lives remaining. Purchase additional lives or wait: " 
-            + userVcRecharge[LIVES_CURRENCY_CODE].SecondsToRecharge + " seconds.";
-		}
-	}
-	catch(ex)
-	{
-		return JSON.stringify(ex);
-	}
-
-
-	// calculate the battle using our 'global' params...
-	var gemsFound = Math.floor(Math.random() * (GEM_MAX - GEM_MIN + 1) + GEM_MIN);
-	AddVc(userVcBalances, GEMS_CURRENCY_CODE, gemsFound);
-	log.info("You found " + gemsFound + " gems.");
-
-	var rollOfFate =  Math.floor(Math.random() * (10 - 1 + 1) + 1);
-	var lostALife = rollOfFate <= Math.floor(10 * CHANCE_TO_DIE) ? true : false; 
-
-	if(lostALife)
-	{
-		SubtractVc(userVcBalances, LIVES_CURRENCY_CODE, 1);
-		log.info("You lost a life.");
-	}
-
-	var battleResults = {};
-		battleResults.gemsFound = gemsFound;
-		battleResults.lostALife = lostALife;
-
-	return JSON.stringify(battleResults);
-};
-
-
-// For Regenerate Currency Example
-function CheckLives(vcBalnces)
-{
-	if(vcBalnces != null && vcBalnces.hasOwnProperty(LIVES_CURRENCY_CODE) && vcBalnces[LIVES_CURRENCY_CODE] > 0)
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-}
+// function CheckLives(vcBalnces)
+// {
+// 	if(vcBalnces != null && vcBalnces.hasOwnProperty(LIVES_CURRENCY_CODE) && vcBalnces[LIVES_CURRENCY_CODE] > 0)
+// 	{
+// 		return true;
+// 	}
+// 	else
+// 	{
+// 		return false;
+// 	}
+// }
 
 
 function CheckEnergy(vcBalnces)
@@ -165,55 +165,55 @@ handlers.EasyLogEvent = function (args)
     log.error("This error was appended to the log");
 }
 
-handlers.GetPlayerStats = function (args)
-{
-    var playerStatResult = server.GetPla
-}
+// handlers.GetPlayerStats = function (args)
+// {
+//     var playerStatResult = server.GetPla
+// }
 
-handlers.UpdatePlayerStats = function (args, context) 
-{
-    var playerStatResult = server.UpdatePlayerStatistics(
-    {
-        PlayFabId: currentPlayerId,
-        Statistics: [{StatisticName: "SpecialTrick_TEST", Value: 2 }]
-    });
-}
+// handlers.UpdatePlayerStats = function (args, context) 
+// {
+//     var playerStatResult = server.UpdatePlayerStatistics(
+//     {
+//         PlayFabId: currentPlayerId,
+//         Statistics: [{StatisticName: "SpecialTrick_TEST", Value: 2 }]
+//     });
+// }
 
-handlers.GetPlayerData = function (args)
-{
-    var playerDataResult = server.GetPlayerData(
-    {
-        PlayFabId: currentPlayerId,
-        Keys: ["secretshoes","secrettrick"]
-    });
+// handlers.GetPlayerData = function (args)
+// {
+//     var playerDataResult = server.GetPlayerData(
+//     {
+//         PlayFabId: currentPlayerId,
+//         Keys: ["secretshoes","secrettrick"]
+//     });
     
-	var playerDataResults = {};
-		playerDataResults..gemsFound = gemsFound;
-		playerDataResults.lostALife = lostALifesce
+// 	var playerDataResults = {};
+// 		playerDataResults.gemsFound = gemsFound;
+// 		playerDataResults.lostALife = lostALifesce
 
-	return JSON.stringify(battleResults);    
+// 	return JSON.stringify(battleResults);    
     
-}
+// }
 
-handlers.UpdatePlayerData = function (args, context)
-{
-    var playerDataResult = server.UpdateUserData(
-    {
-        PlayFabId: currentPlayerId,
-        Data: { secretshoes: "golden boots 2", secrettrick: "scissor kick 2"},
-        Permission: "Public"
-    });
-}
+// handlers.UpdatePlayerData = function (args, context)
+// {
+//     var playerDataResult = server.UpdateUserData(
+//     {
+//         PlayFabId: currentPlayerId,
+//         Data: { secretshoes: "golden boots 2", secrettrick: "scissor kick 2"},
+//         Permission: "Public"
+//     });
+// }
 
-handlers.helloWorld = function (args)
-{
-  //var message = "Hello " + currentPlayerId + "!";
+// handlers.helloWorld = function (args)
+// {
+//   //var message = "Hello " + currentPlayerId + "!";
     
-  var message = "Hello " + args.name;    
+//   var message = "Hello " + args.name;    
     
-  log.info(message);
-  return { messageValue: message };
-}
+//   log.info(message);
+//   return { messageValue: message };
+// }
 
 handlers.SetUserReadOnlyData = function (args)
 {
