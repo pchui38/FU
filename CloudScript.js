@@ -21,7 +21,7 @@ handlers.UpdatePlayerEnergy = function(args)
 	};
 
 	var GetUserInventoryResult = server.GetUserInventory(GetUserInventoryRequest);
-	var userInventory = GetUserInventoryResult.Inventory;
+//	var userInventory = GetUserInventoryResult.Inventory;
 	var userVcBalances = GetUserInventoryResult.VirtualCurrency;
 	var userVcRecharge = GetUserInventoryResult.VirtualCurrencyRechargeTimes;
 
@@ -42,10 +42,10 @@ handlers.UpdatePlayerEnergy = function(args)
 	SubtractVc(userVcBalances, ENERGY_CURRENCY_CODE, 1);
 	log.info("You have used an energy unit.");
 
-	var userEnergyResults = {};
-		userEnergyResults.currentUserVcBalances = userVcBalances;
+	var userDataResults = {};
+		userDataResults.currentUserVcBalances = userVcBalances;
 
-	return JSON.stringify(userEnergyResults);
+	return JSON.stringify(userDataResults);
 }
 
 
