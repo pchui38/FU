@@ -43,7 +43,8 @@ handlers.UpdatePlayerEnergy = function(args)
 	log.info("You have used an energy unit.");
 
 	var userDataResults = {};
-		userDataResults.currentUserVcBalances = userVcBalances;
+//		userDataResults.currentUserVcBalances = userVcBalances;
+	userDataResults.currentUserVcBalances = 20;
 
 	return JSON.stringify(userDataResults);
 }
