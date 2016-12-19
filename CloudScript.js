@@ -30,8 +30,9 @@ handlers.UpdatePlayerEnergy = function(args)
 	{
 		if (!CheckEnergy(userVcBalances))
 		{
-			throw "No energy remaining. Please wait a moment for recharging.."
-			+ userVcRecharge[ENERGY_CURRENCY_CODE].SecondsToRecharge + " seconds.";
+			// throw "No energy remaining. Please wait a moment for recharging.."
+			// + userVcRecharge[ENERGY_CURRENCY_CODE].SecondsToRecharge + " seconds.";
+			throw userVcRecharge[ENERGY_CURRENCY_CODE].SecondsToRecharge;
 		}
 	}
 	catch(ex)
@@ -44,6 +45,7 @@ handlers.UpdatePlayerEnergy = function(args)
 
 	var userDataResults = {};
 	userDataResults.currentUserVcBalances = userVcBalances[ENERGY_CURRENCY_CODE];
+	userDataResults.currentUserVcRecharge = userVcRecharge[ENERGY_CURRENCY_CODE];
 
 	// parseInt(userVcBalances)
 
