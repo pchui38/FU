@@ -45,7 +45,7 @@ handlers.UpdatePlayerEnergy = function(args)
 
 	var userDataResults = {};
 	userDataResults.currentUserVcBalances = userVcBalances[ENERGY_CURRENCY_CODE];
-	userDataResults.currentUserVcRecharge = userVcRecharge[ENERGY_CURRENCY_CODE];
+	userDataResults.currentUserVcRecharge = userVcRecharge[ENERGY_CURRENCY_CODE].SecondsToRecharge;
 
 	// parseInt(userVcBalances)
 
