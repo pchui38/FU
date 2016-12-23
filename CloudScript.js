@@ -12,7 +12,7 @@ var GEMS_CURRENCY_CODE = "GM";      // currency code for our Gems VC
 // FootUnited
 var ENERGY_CURRENCY_CODE = "EY";	// currecny code for our ENERGY Bar VC
 
-handlers.UpdatePlayerEnergy = function(args)
+handlers.SubtractPlayerEnergy = function(args)
 {
 	// get the calling player's inventory and VC balances
 	var GetUserInventoryRequest =
@@ -28,7 +28,7 @@ handlers.UpdatePlayerEnergy = function(args)
 	// make sure the player has > 0 energy bar before proceeding
 	try
 	{
-		if (!CheckEnergy(userVcBalances))
+		if (!CheckEnergyNotEmpty(userVcBalances))
 		{
 			// throw "No energy remaining. Please wait a moment for recharging.."
 			// + userVcRecharge[ENERGY_CURRENCY_CODE].SecondsToRecharge + " seconds.";
@@ -48,6 +48,45 @@ handlers.UpdatePlayerEnergy = function(args)
 	userDataResults.currentUserVcRecharge = userVcRecharge[ENERGY_CURRENCY_CODE].SecondsToRecharge;
 
 	// parseInt(userVcBalances)
+
+	return JSON.stringify(userDataResults);
+}
+
+
+handlers.AddPlayerEnergy = function(args)
+{
+	// get the calling player's inventory and VC balances
+	var GetUserInventoryRequest =
+	{
+		"PlayFabId": currentPlayerId
+	};
+
+	var GetUserInventoryResult = server.GetUserInventory(GetUserInventoryRequest);
+//	var userInventory = GetUserInventoryResult.Inventory;
+	var userVcBalances = GetUserInventoryResult.VirtualCurrency;
+	var userVcRecharge = GetUserInventoryResult.VirtualCurrencyRechargeTimes;
+
+	// make sure the player do not have full energy (i.e. < 5 energy bar) before proceeding
+	try
+	{
+		if (!CheckEnergyNotFull(userVcBalances))
+		{
+			// throw "FULL energy. No need for recharging.."
+			// + userVcRecharge[ENERGY_CURRENCY_CODE].SecondsToRecharge + " seconds.";
+			throw userVcRecharge[ENERGY_CURRENCY_CODE].SecondsToRecharge;
+		}
+	}
+	catch(ex)
+	{
+		return JSON.stringify(ex);
+	}
+
+	AddVc(userVcBalances, ENERGY_CURRENCY_CODE, 1);
+	log.info("You have received a new energy unit.");
+
+	var userDataResults = {};
+	userDataResults.currentUserVcBalances = userVcBalances[ENERGY_CURRENCY_CODE];
+	userDataResults.currentUserVcRecharge = userVcRecharge[ENERGY_CURRENCY_CODE].SecondsToRecharge;
 
 	return JSON.stringify(userDataResults);
 }
@@ -118,7 +157,7 @@ handlers.UpdatePlayerEnergy = function(args)
 // }
 
 
-function CheckEnergy(vcBalnces)
+function CheckEnergyNotEmpty(vcBalnces)
 {
 	if (vcBalnces != null && vcBalnces.hasOwnProperty(ENERGY_CURRENCY_CODE) && vcBalnces[ENERGY_CURRENCY_CODE] > 0)
 	{
@@ -130,7 +169,17 @@ function CheckEnergy(vcBalnces)
 	}
 }
 
-
+function CheckEnergyNotFull(vcBalnces)
+{
+	if (vcBalnces != null && vcBalnces.hasOwnProperty(ENERGY_CURRENCY_CODE) && vcBalnces[ENERGY_CURRENCY_CODE] < 5)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
 
 function AddVc(vcBalnces, code, qty)
 { 
