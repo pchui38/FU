@@ -183,7 +183,7 @@ function CheckEnergyNotFull(vcBalnces)
 
 function AddVc(vcBalnces, code, qty)
 { 
-	if(vcBalnces != null && vcBalnces.hasOwnProperty(code) &&  vcBalnces[code] > 0)
+	if(vcBalnces != null && vcBalnces.hasOwnProperty(code) &&  vcBalnces[code] < 5)
 	{
 		vcBalnces[code] += qty;
 	}
