@@ -2,15 +2,18 @@
 
 
 // For Regenerate Currency Example
-var CHANCE_TO_DIE = 0.3333;     // % chance to lose a life during battle, this could also be set in TitleData
-var GEM_MAX = 20;      // maximum limit on the gold that can be found, this could also be set in TitleData
-var GEM_MIN = 10;      // maximum limit on the gold that can be found, this could also be set in TitleData
-var LIVES_CURRENCY_CODE = "LV";     // currecny code for our Lives VC
-var GEMS_CURRENCY_CODE = "GM";      // currency code for our Gems VC
+// var CHANCE_TO_DIE = 0.3333;     // % chance to lose a life during battle, this could also be set in TitleData
+// var GEM_MAX = 20;      // maximum limit on the gold that can be found, this could also be set in TitleData
+// var GEM_MIN = 10;      // maximum limit on the gold that can be found, this could also be set in TitleData
+// var LIVES_CURRENCY_CODE = "LV";     // currecny code for our Lives VC
+// var GEMS_CURRENCY_CODE = "GM";      // currency code for our Gems VC
 
 
 // FootUnited
 var ENERGY_CURRENCY_CODE = "EY";	// currecny code for our ENERGY Bar VC
+
+// initialise isPlayerBanned to FALSE
+var isPlayerBanned = false;
 
 handlers.SubtractPlayerEnergy = function(args)
 {
@@ -25,15 +28,27 @@ handlers.SubtractPlayerEnergy = function(args)
 	var userVcBalances = GetUserInventoryResult.VirtualCurrency;
 	var userVcRecharge = GetUserInventoryResult.VirtualCurrencyRechargeTimes;
 
-	// make sure the player has > 0 energy bar before proceeding
+
+	// make sure the player is NOT cheated & the player has > 0 energy level before proceeding
 	try
 	{
-		if (!CheckEnergyNotEmpty(userVcBalances))
+		if (CheckIsPlayerCheated(userVcBalances))
 		{
-			// throw "No energy remaining. Please wait a moment for recharging.."
-			// + userVcRecharge[ENERGY_CURRENCY_CODE].SecondsToRecharge + " seconds.";
-			throw userVcRecharge[ENERGY_CURRENCY_CODE].SecondsToRecharge;
+			// Ban the Player's PlayFab account
+			BanPlayer();
+
+			// Set bool isPlayerBanned to TRUE
+			isPlayerBanned = true;
+
+			// Throw an error as bool variable to return to the Player & take the Player back to 'Title' scene
+			throw isPlayerBanned;
 		}
+
+		// if (!CheckEnergyNotEmpty(userVcBalances))
+		// {
+		// 	// throw "No energy remaining. Please wait a moment for recharging.."
+		// 	throw userVcRecharge[ENERGY_CURRENCY_CODE].SecondsToRecharge;
+		// }
 	}
 	catch(ex)
 	{
@@ -156,7 +171,38 @@ handlers.AddPlayerEnergy = function(args)
 // 	}
 // }
 
+// Ban the Player's PlayFab Account
+function BanPlayer()
+{
+	var BanPlayerRequest = {
+		"Bans" : [
+			{ 
+				"PlayFabId": currentPlayerId,
+			// "IPAddress": "192.168.1.1",
+			 // "Reason": "You cheated!",
+		 		"DurationInHours": 1
+			}
+		]
+	};
+	var BanPlayerResult = server.BanUsers(BanPlayerRequest);
+}
 
+// Check if the Player is cheating
+function CheckIsPlayerCheated(vcBalnces)
+{
+	if (vcBalnces != null && vcBalnces.hasOwnProperty(ENERGY_CURRENCY_CODE) && vcBalnces[ENERGY_CURRENCY_CODE] <= 0)
+	{
+		// Player is cheated
+		return true;
+	}
+	else
+	{
+		// Player is NOT cheated
+		return false;
+	}
+}
+
+// Check if the Player's Energy level is NOT empty 
 function CheckEnergyNotEmpty(vcBalnces)
 {
 	if (vcBalnces != null && vcBalnces.hasOwnProperty(ENERGY_CURRENCY_CODE) && vcBalnces[ENERGY_CURRENCY_CODE] > 0)
@@ -169,6 +215,7 @@ function CheckEnergyNotEmpty(vcBalnces)
 	}
 }
 
+// Check if the Player's Energy level is NOT Full yet 
 function CheckEnergyNotFull(vcBalnces)
 {
 	if (vcBalnces != null && vcBalnces.hasOwnProperty(ENERGY_CURRENCY_CODE) && vcBalnces[ENERGY_CURRENCY_CODE] < 5)
@@ -181,6 +228,7 @@ function CheckEnergyNotFull(vcBalnces)
 	}
 }
 
+// Add a certain quantity of virtual currency to the Player's PlayFab account
 function AddVc(vcBalnces, code, qty)
 { 
 	if(vcBalnces != null && vcBalnces.hasOwnProperty(code) &&  vcBalnces[code] < 5)
@@ -196,6 +244,7 @@ function AddVc(vcBalnces, code, qty)
     var AddUserVirtualCurrencyResult = server.AddUserVirtualCurrency(AddUserVirtualCurrencyRequest);
 }
 
+// Subtract a certain quantity of virtual currency from the Player's PlayFab account
 function SubtractVc(vcBalnces, code, qty)
 {
 	if(vcBalnces != null && vcBalnces.hasOwnProperty(code) &&  vcBalnces[code] > 0)
