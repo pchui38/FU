@@ -179,7 +179,7 @@ function BanPlayer()
 			{ 
 				"PlayFabId": currentPlayerId,
 			// "IPAddress": "192.168.1.1",
-			 // "Reason": "You cheated!",
+				"Reason": "You cheated!",
 		 		"DurationInHours": 1
 			}
 		]
