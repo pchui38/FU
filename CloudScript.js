@@ -273,6 +273,8 @@ function AddFullVc(vcBalnces, code)
 
 	if(vcBalnces != null && vcBalnces.hasOwnProperty(code) &&  vcBalnces[code] < 5)
 	{
+		vcBalnces[code] = fullQty;
+
 		var AddUserVirtualCurrencyRequest = {
 		    "PlayFabId" : currentPlayerId,
 		    "VirtualCurrency": code,
