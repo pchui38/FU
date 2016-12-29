@@ -106,6 +106,43 @@ handlers.AddPlayerEnergy = function(args)
 	return JSON.stringify(userDataResults);
 }
 
+handlers.AddPlayerFullEnergy = function(args)
+{
+	// get the calling player's inventory and VC balances
+	var GetUserInventoryRequest =
+	{
+		"PlayFabId": currentPlayerId
+	};
+
+	var GetUserInventoryResult = server.GetUserInventory(GetUserInventoryRequest);
+//	var userInventory = GetUserInventoryResult.Inventory;
+	var userVcBalances = GetUserInventoryResult.VirtualCurrency;
+	var userVcRecharge = GetUserInventoryResult.VirtualCurrencyRechargeTimes;
+
+	// make sure the player do not have full energy (i.e. < 5 energy bar) before proceeding
+	try
+	{
+		if (!CheckEnergyNotFull(userVcBalances))
+		{
+			// throw "FULL energy. No need for recharging.."
+			// + userVcRecharge[ENERGY_CURRENCY_CODE].SecondsToRecharge + " seconds.";
+			throw userVcRecharge[ENERGY_CURRENCY_CODE].SecondsToRecharge;
+		}
+	}
+	catch(ex)
+	{
+		return JSON.stringify(ex);
+	}
+
+	AddFullVc(userVcBalances, ENERGY_CURRENCY_CODE, diffEnergy);
+	log.info("You have received Full energy unit.");
+
+	var userDataResults = {};
+	userDataResults.currentUserVcBalances = userVcBalances[ENERGY_CURRENCY_CODE];
+	userDataResults.currentUserVcRecharge = userVcRecharge[ENERGY_CURRENCY_CODE].SecondsToRecharge;
+
+	return JSON.stringify(userDataResults);
+}
 
 // // For Regenerate Currency Example
 // handlers.Battle = function(args) 
@@ -226,6 +263,23 @@ function CheckEnergyNotFull(vcBalnces)
 	{
 		return false;
 	}
+}
+
+// Add a certain quantity of virtual currency to the Player's PlayFab account
+function AddFullVc(vcBalnces, code)
+{ 
+	var fullEnergy = 5;
+	var diffEnergy = fullEnergy - vcBalnces[code];
+
+	if(vcBalnces != null && vcBalnces.hasOwnProperty(code) &&  vcBalnces[code] < 5)
+	{
+		var AddUserVirtualCurrencyRequest = {
+		    "PlayFabId" : currentPlayerId,
+		    "VirtualCurrency": code,
+		    "Amount": diffEnergy
+	    };
+	    var AddUserVirtualCurrencyResult = server.AddUserVirtualCurrency(AddUserVirtualCurrencyRequest);
+	}    
 }
 
 // Add a certain quantity of virtual currency to the Player's PlayFab account
