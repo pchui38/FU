@@ -134,7 +134,7 @@ handlers.AddPlayerFullEnergy = function(args)
 		return JSON.stringify(ex);
 	}
 
-	AddFullVc(userVcBalances, ENERGY_CURRENCY_CODE, diffEnergy);
+	AddFullVc(userVcBalances, ENERGY_CURRENCY_CODE);
 	log.info("You have received Full energy unit.");
 
 	var userDataResults = {};
@@ -268,15 +268,15 @@ function CheckEnergyNotFull(vcBalnces)
 // Add a certain quantity of virtual currency to the Player's PlayFab account
 function AddFullVc(vcBalnces, code)
 { 
-	var fullEnergy = 5;
-	var diffEnergy = fullEnergy - vcBalnces[code];
+	var fullQty = 5;
+	var diffQty = fullQty - vcBalnces[code];
 
 	if(vcBalnces != null && vcBalnces.hasOwnProperty(code) &&  vcBalnces[code] < 5)
 	{
 		var AddUserVirtualCurrencyRequest = {
 		    "PlayFabId" : currentPlayerId,
 		    "VirtualCurrency": code,
-		    "Amount": diffEnergy
+		    "Amount": diffQty
 	    };
 	    var AddUserVirtualCurrencyResult = server.AddUserVirtualCurrency(AddUserVirtualCurrencyRequest);
 	}    
