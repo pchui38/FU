@@ -10,6 +10,7 @@
 
 
 // FootUnited
+var INGAME_CURRENCY_CODE = "GC";
 var ENERGY_CURRENCY_CODE = "EY";	// currecny code for our ENERGY Bar VC
 
 // initialise isPlayerBanned to FALSE
@@ -59,8 +60,8 @@ handlers.SubtractPlayerEnergy = function(args)
 	log.info("You have used an energy unit.");
 
 	var userDataResults = {};
-	userDataResults.currentUserVcBalances = userVcBalances[ENERGY_CURRENCY_CODE];
-	userDataResults.currentUserVcRecharge = userVcRecharge[ENERGY_CURRENCY_CODE].SecondsToRecharge;
+	userDataResults.currentEnergyVcBalances = userVcBalances[ENERGY_CURRENCY_CODE];
+	userDataResults.currentEnergyVcRecharge = userVcRecharge[ENERGY_CURRENCY_CODE].SecondsToRecharge;
 
 	// parseInt(userVcBalances)
 
@@ -100,8 +101,8 @@ handlers.AddPlayerEnergy = function(args)
 	log.info("You have received a new energy unit.");
 
 	var userDataResults = {};
-	userDataResults.currentUserVcBalances = userVcBalances[ENERGY_CURRENCY_CODE];
-	userDataResults.currentUserVcRecharge = userVcRecharge[ENERGY_CURRENCY_CODE].SecondsToRecharge;
+	userDataResults.currentEnergyVcBalances = userVcBalances[ENERGY_CURRENCY_CODE];
+	userDataResults.currentEnergyVcRecharge = userVcRecharge[ENERGY_CURRENCY_CODE].SecondsToRecharge;
 
 	return JSON.stringify(userDataResults);
 }
@@ -134,12 +135,20 @@ handlers.AddPlayerFullEnergy = function(args)
 		return JSON.stringify(ex);
 	}
 
-	AddFullVc(userVcBalances, ENERGY_CURRENCY_CODE);
-	log.info("You have received Full energy unit.");
+	// Subtract In-Game currency from Player's PlayFab account (in exchange of FULL Energy)
+	if (SubtractVc(userVcBalances, INGAME_CURRENCY_CODE, 1000))
+	{
+		log.info("1000 coins has been deducted from your account.");
+
+		// Recharge Player with FULL Energy & subtract the Player's certain amount of In-Game currency
+		AddFullEnergy(userVcBalances, ENERGY_CURRENCY_CODE, 5);
+		log.info("You have received Full energy unit.");		
+	}
 
 	var userDataResults = {};
-	userDataResults.currentUserVcBalances = userVcBalances[ENERGY_CURRENCY_CODE];
-	userDataResults.currentUserVcRecharge = userVcRecharge[ENERGY_CURRENCY_CODE].SecondsToRecharge;
+	userDataResults.currentInGameVcBalances = userVcBalances[INGAME_CURRENCY_CODE];	
+	userDataResults.currentEnergyVcBalances = userVcBalances[ENERGY_CURRENCY_CODE];
+	userDataResults.currentEnergyVcRecharge = userVcRecharge[ENERGY_CURRENCY_CODE].SecondsToRecharge;
 
 	return JSON.stringify(userDataResults);
 }
@@ -224,7 +233,7 @@ function BanPlayer()
 	var BanPlayerResult = server.BanUsers(BanPlayerRequest);
 }
 
-// Check if the Player is cheating
+// Check if the Player is cheating by checking the actual energy level stored in the Player's PlayFab account
 function CheckIsPlayerCheated(vcBalnces)
 {
 	if (vcBalnces != null && vcBalnces.hasOwnProperty(ENERGY_CURRENCY_CODE) && vcBalnces[ENERGY_CURRENCY_CODE] <= 0)
@@ -265,13 +274,13 @@ function CheckEnergyNotFull(vcBalnces)
 	}
 }
 
-// Add a certain quantity of virtual currency to the Player's PlayFab account
-function AddFullVc(vcBalnces, code)
+// Add Full Energy to the Player's PlayFab account, 
+//	Then subtract a certain quantity of coins (virtual currency) from the player
+function AddFullEnergy(vcBalnces, code, fullQty)
 { 
-	var fullQty = 5;
 	var diffQty = fullQty - vcBalnces[code];
 
-	if(vcBalnces != null && vcBalnces.hasOwnProperty(code) &&  vcBalnces[code] < 5)
+	if(vcBalnces != null && vcBalnces.hasOwnProperty(code) &&  vcBalnces[code] < fullQty)
 	{
 		vcBalnces[code] = fullQty;
 
@@ -290,31 +299,36 @@ function AddVc(vcBalnces, code, qty)
 	if(vcBalnces != null && vcBalnces.hasOwnProperty(code) &&  vcBalnces[code] < 5)
 	{
 		vcBalnces[code] += qty;
-	}
 
-	var AddUserVirtualCurrencyRequest = {
-	    "PlayFabId" : currentPlayerId,
-	    "VirtualCurrency": code,
-	    "Amount": qty
-    };
-    var AddUserVirtualCurrencyResult = server.AddUserVirtualCurrency(AddUserVirtualCurrencyRequest);
+		var AddUserVirtualCurrencyRequest = {
+		    "PlayFabId" : currentPlayerId,
+		    "VirtualCurrency": code,
+		    "Amount": qty
+	    };
+	    var AddUserVirtualCurrencyResult = server.AddUserVirtualCurrency(AddUserVirtualCurrencyRequest);		
+	}
 }
 
 // Subtract a certain quantity of virtual currency from the Player's PlayFab account
 function SubtractVc(vcBalnces, code, qty)
 {
-	if(vcBalnces != null && vcBalnces.hasOwnProperty(code) &&  vcBalnces[code] > 0)
+	if(vcBalnces != null && vcBalnces.hasOwnProperty(code) &&  vcBalnces[code] > 0 && vcBalnces[code] >= qty)
 	{
 		vcBalnces[code] -= qty;
+
+		var SubtractUserVirtualCurrencyRequest = {
+		    "PlayFabId" : currentPlayerId,
+		    "VirtualCurrency": code,
+		    "Amount": qty
+	    };
+	    var SubtractUserVirtualCurrencyResult = server.SubtractUserVirtualCurrency(SubtractUserVirtualCurrencyRequest);
+
+	    return true;
 	}
-
-	var SubtractUserVirtualCurrencyRequest = {
-	    "PlayFabId" : currentPlayerId,
-	    "VirtualCurrency": code,
-	    "Amount": qty
-    };
-
-    var SubtractUserVirtualCurrencyResult = server.SubtractUserVirtualCurrency(SubtractUserVirtualCurrencyRequest);
+	else
+	{
+		return false;
+	}
 }
 
 handlers.EasyLogEvent = function (args)
