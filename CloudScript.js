@@ -30,31 +30,31 @@ handlers.SubtractPlayerEnergy = function(args)
 	var userVcRecharge = GetUserInventoryResult.VirtualCurrencyRechargeTimes;
 
 
-	// make sure the player is NOT cheated & the player has > 0 energy level before proceeding
-	try
-	{
-		if (CheckIsPlayerCheated(userVcBalances))
-		{
-			// Ban the Player's PlayFab account
-			BanPlayer();
-
-			// Set bool isPlayerBanned to TRUE
-			isPlayerBanned = true;
-
-			// Throw an error as bool variable to return to the Player & take the Player back to 'Title' scene
-			throw isPlayerBanned;
-		}
-
-		// if (!CheckEnergyNotEmpty(userVcBalances))
-		// {
-		// 	// throw "No energy remaining. Please wait a moment for recharging.."
-		// 	throw userVcRecharge[ENERGY_CURRENCY_CODE].SecondsToRecharge;
-		// }
-	}
-	catch(ex)
-	{
-		return JSON.stringify(ex);
-	}
+//	// make sure the player is NOT cheated & the player has > 0 energy level before proceeding
+//	try
+//	{
+//		if (CheckIsPlayerCheated(userVcBalances))
+//		{
+//			// Ban the Player's PlayFab account
+//			BanPlayer();
+//
+//			// Set bool isPlayerBanned to TRUE
+//			isPlayerBanned = true;
+//
+//			// Throw an error as bool variable to return to the Player & take the Player back to 'Title' scene
+//			throw isPlayerBanned;
+//		}
+//
+//		// if (!CheckEnergyNotEmpty(userVcBalances))
+//		// {
+//		// 	// throw "No energy remaining. Please wait a moment for recharging.."
+//		// 	throw userVcRecharge[ENERGY_CURRENCY_CODE].SecondsToRecharge;
+//		// }
+//	}
+//	catch(ex)
+//	{
+//		return JSON.stringify(ex);
+//	}
 
 	SubtractVc(userVcBalances, ENERGY_CURRENCY_CODE, 1);
 	log.info("You have used an energy unit.");
@@ -217,36 +217,36 @@ handlers.AddPlayerFullEnergy = function(args)
 // 	}
 // }
 
-// Ban the Player's PlayFab Account
-function BanPlayer()
-{
-	var BanPlayerRequest = {
-		"Bans" : [
-			{ 
-				"PlayFabId": currentPlayerId,
-			// "IPAddress": "192.168.1.1",
-				"Reason": "You cheated!",
-		 		"DurationInHours": 1
-			}
-		]
-	};
-	var BanPlayerResult = server.BanUsers(BanPlayerRequest);
-}
+//// Ban the Player's PlayFab Account
+//function BanPlayer()
+//{
+//	var BanPlayerRequest = {
+//		"Bans" : [
+//			{ 
+//				"PlayFabId": currentPlayerId,
+//			// "IPAddress": "192.168.1.1",
+//				"Reason": "You cheated!",
+//		 		"DurationInHours": 1
+//			}
+//		]
+//	};
+//	var BanPlayerResult = server.BanUsers(BanPlayerRequest);
+//}
 
-// Check if the Player is cheating by checking the actual energy level stored in the Player's PlayFab account
-function CheckIsPlayerCheated(vcBalnces)
-{
-	if (vcBalnces != null && vcBalnces.hasOwnProperty(ENERGY_CURRENCY_CODE) && vcBalnces[ENERGY_CURRENCY_CODE] <= 0)
-	{
-		// Player is cheated
-		return true;
-	}
-	else
-	{
-		// Player is NOT cheated
-		return false;
-	}
-}
+//// Check if the Player is cheating by checking the actual energy level stored in the Player's PlayFab account
+//function CheckIsPlayerCheated(vcBalnces)
+//{
+//	if (vcBalnces != null && vcBalnces.hasOwnProperty(ENERGY_CURRENCY_CODE) && vcBalnces[ENERGY_CURRENCY_CODE] <= 0)
+//	{
+//		// Player is cheated
+//		return true;
+//	}
+//	else
+//	{
+//		// Player is NOT cheated
+//		return false;
+//	}
+//}
 
 // Check if the Player's Energy level is NOT empty 
 function CheckEnergyNotEmpty(vcBalnces)
